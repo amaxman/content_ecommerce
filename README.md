@@ -1,2 +1,2 @@
-# content_ecommerce
+# 目的
 中国国内电商素材处理

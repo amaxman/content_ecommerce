@@ -1,8 +1,9 @@
 import os
 import cv2
 import numpy as np
-from pathlib import Path
+
 from config import img_folder_path, img_width, img_height
+from file.file_utils import get_non_hidden_files_pathlib
 
 
 def preprocess_image(img_cv):
@@ -79,18 +80,6 @@ def blur_qrcode_opencv(img_cv):
     # 如果所有方法都无法识别，返回原图并提示
     print("未检测到二维码")
     return img_copy
-
-
-def get_non_hidden_files_pathlib(directory):
-    """使用pathlib获取目录中所有非隐藏文件"""
-    dir_path = Path(directory)
-    if not dir_path.exists() or not dir_path.is_dir():
-        raise ValueError(f"目录不存在或不是有效的目录: {directory}")
-
-    # 过滤掉所有以.开头的文件和目录
-    return [str(file) for file in dir_path.rglob('*')
-            if file.is_file()
-            and not any(part.startswith('.') for part in file.parts)]
 
 
 def resize_image(input_path, output_path):

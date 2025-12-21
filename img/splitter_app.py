@@ -18,7 +18,7 @@ from file.file_utils import read_chinese_path_image, cv2_imwrite_chinese
 class ImageSplitterApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("淘宝图片切分工具")
+        self.root.title("图片切分工具")
         self.root.geometry("650x500")
         self.root.resizable(True, True)
 

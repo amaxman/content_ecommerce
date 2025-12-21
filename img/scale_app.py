@@ -11,7 +11,7 @@ from file.file_utils import get_non_hidden_files_pathlib, read_chinese_path_imag
 class ImageScaleApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("图片处理工具")
+        self.root.title("图片缩放工具")
         self.root.geometry("600x400")
 
         # 创建界面组件

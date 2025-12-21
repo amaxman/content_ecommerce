@@ -33,15 +33,12 @@ class NormalApp:
         self.title_label.grid(row=0, column=0, columnspan=3, pady=(5, 10))
 
         # ========== 加载图片（本地图片/默认占位图，存储原始图片用于自适应） ==========
-        img_path = "resources/images/resize.png"
         self.img_config = {
-            "new": {"path": img_path, "color": (200, 200, 200)},
-            "exit": {"path": img_path, "color": (255, 100, 100)},
-            "scale": {"path": img_path, "color": (100, 200, 100)},
-            "split": {"path": img_path, "color": (100, 100, 200)},
-            "qrcode": {"path": img_path, "color": (200, 200, 100)},
-            "watermark": {"path": img_path, "color": (200, 100, 200)},
-            "text": {"path": img_path, "color": (100, 200, 200)},
+            "scale": {"path": 'resources/images/resize.png', "color": (100, 200, 100)},
+            "split": {"path": 'resources/images/split.png', "color": (100, 100, 200)},
+            "qrcode": {"path": 'resources/images/qr_code.png', "color": (200, 200, 100)},
+            "watermark": {"path": 'resources/images/watermark.png', "color": (200, 100, 200)},
+            "text": {"path": 'resources/images/text.png', "color": (100, 200, 200)},
         }
         self.original_imgs = {}  # 存储原始PIL图片
         self.tk_imgs = {}  # 存储tkinter可用的图片对象

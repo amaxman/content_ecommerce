@@ -1,5 +1,5 @@
 """
-主要用于淘宝图片切分。按照得力的图片风格，官网下载的xq.jpg无法直接上传到淘宝素材中
+将制定图片按照宽度切为N等分
 """
 
 import os
@@ -105,7 +105,44 @@ def blur_qrcode_opencv(img_cv):
     return img_copy
 
 
-def split_image_into_squares(img, output_dir, file_name):
+def split_image_by_width(img, num_parts):
+    """
+    按照宽度将图片平均切分成指定数量的部分
+
+    参数:
+        img: OpenCV读取的图像
+        num_parts: 要切分的部分数量
+
+    返回:
+        切分后的图像列表
+    """
+    if num_parts <= 0:
+        raise ValueError("切分数量必须大于0")
+
+    # 获取图像的高度和宽度
+    height, width = img.shape[:2]
+
+    # 计算每一部分的宽度
+    part_width = width // num_parts
+
+    # 存储切分后的图像
+    split_images = []
+
+    # 切分图像
+    for i in range(num_parts):
+        # 计算当前部分的起始和结束列
+        start_col = i * part_width
+        # 最后一部分可能需要处理余数，确保覆盖整个宽度
+        end_col = (i + 1) * part_width if i < num_parts - 1 else width
+
+        # 提取当前部分
+        part = img[:, start_col:end_col]
+        split_images.append(part)
+
+    return split_images
+
+
+def split_image_into_squares(img, total, output_dir, file_name):
     """
     将图片上下拆分为正方形片段，使用图片宽度作为每个片段的高度
 
@@ -117,44 +154,17 @@ def split_image_into_squares(img, output_dir, file_name):
     os.makedirs(output_dir, exist_ok=True)
 
     try:
-        # 获取图片尺寸 (高度, 宽度, 通道数)
-        height, width = img.shape[:2]
-        # print(f"原始图片尺寸: 宽度 {width}px, 高度 {height}px")
-
-        # 使用图片宽度作为每个正方形片段的高度
-        segment_height = width
-        # print(f"每个正方形片段尺寸: {width}px × {segment_height}px")
-
-        # 计算可以分成多少段
-        num_segments = (height + segment_height - 1) // segment_height
-        # print(f"将上下拆分为 {num_segments} 个正方形片段")
-
-        # 拆分图片
-        for i in range(num_segments):
-            # 计算当前分段的起始和结束位置（垂直方向）
-            start_y = i * segment_height
-            end_y = start_y + segment_height
-
-            # 确保不超过图片高度
-            if end_y > height:
-                end_y = height
-
-            # 裁剪图片 (OpenCV格式为 [y1:y2, x1:x2])
-            # 宽度方向取完整宽度，高度方向取当前分段
-            segment = img[start_y:end_y, :width]
-
-            # 生成输出文件名
+        split_images = split_image_by_width(img, total)
+        for i in range(len(split_images)):
+            image = split_images[i]
             output_path = os.path.join(output_dir, f"{file_name}_{i + 1:02d}.png")
-
-            # 保存分段图片
-            cv2.imwrite(output_path, segment)
-
+            cv2.imwrite(output_path, image)
 
     except Exception as e:
         print(f"处理图片时出错: {str(e)}")
 
 
-def resize_image(input_path):
+def split_image(input_path, total):
     path = Path(input_path)
     if not path.exists():
         return False
@@ -169,13 +179,8 @@ def resize_image(input_path):
             print(f"无法读取图片: {input_path}")
             return False
 
-        # 先识别并模糊原始图片中的二维码
-        img_with_blur = blur_qrcode_opencv(img_cv)
-
-        path = Path(file_path)
-
         new_path = path.parent
-        split_image_into_squares(img_with_blur, new_path, path.stem)
+        split_image_into_squares(img_cv, total, new_path, path.stem)
 
 
 
@@ -185,27 +190,15 @@ def resize_image(input_path):
 
 
 if __name__ == "__main__":
-    # 指定目录路径
-    target_directory = img_folder_path  # 替换为你的目录路径
+    # 指定图片路径
+    target_directory = '/Users/tyrtao/QcHelper/电商/素材/店铺门头.jpg'  # 替换为你的目录路径
+    if not os.path.exists(target_directory):
+        exit(0)
 
+    # region 获取文件宽度
     try:
-        # 获取并缓存文件列表
-        file_cache = get_non_hidden_files_deli_xq(target_directory)
-        total_files = len(file_cache)
-        img_file_index = 0
+        split_image(target_directory, 3)
 
-        # 打印缓存结果
-        print(f"发现 {len(file_cache)} 个文件路径：")
-        for file_path in file_cache:
-            try:
-                resize_image(file_path)
-
-            except Exception as e:
-                print(f"处理图片时出错: {str(e)}")
-            finally:
-                # print('=======结束=======')
-                img_file_index += 1
-                print(f'{img_file_index}/{total_files},已完成{img_file_index*100/total_files:.2f}%%:{file_path}')
-
-    except ValueError as e:
-        print(e)
+    except Exception as e:
+        print(f"处理图片时出错: {str(e)}")
+    # endregion

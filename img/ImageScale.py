@@ -153,7 +153,7 @@ def get_file_new_path(path):
     file_name_without_ext, file_extension = os.path.splitext(file_name)
 
     new_path = os.path.join(file_directory,
-                            file_name_without_ext.replace('扫描全能王 ', '') + '_800x800' + file_extension)
+                            file_name_without_ext.replace('扫描全能王 ', '') + '_1024x1024' + file_extension)
 
     return new_path
 

@@ -198,36 +198,69 @@ def video_text_recognition(video_path, lang=['ch_sim', 'en']):
     return results
 
 
-if __name__ == "__main__":
-    target_path = Path(video_target_path)
-    if not target_path.exists():
-        sys.exit(0)
-    if not target_path.is_dir():
-        print(target_path + '不是目录')
-        sys.exit(0)
-
-    model = load_whisper_with_mps("/Users/tyrtao/AI/文字识别/语音识别/whisper/medium.pt")
+def split_wav(mp4_path):
+    """
+    提取MP4视频文件中的音频文件
+    """
+    """
+    将MP4视频文件转换为文本（修复moviepy导入问题）
+    """
+    # 检查文件是否存在
+    if not os.path.exists(mp4_path) or not mp4_path.lower().endswith('.mp4'):
+        raise ValueError("请提供有效的MP4文件路径")
 
     try:
-        file_cache = get_non_hidden_files_video(target_path)
-        if not file_cache:
-            print('=======未发现任何文件=======')
-            sys.exit(0)
+        # 1. 提取音频（使用直接导入的VideoFileClip）
+        _mp4_path = Path(mp4_path)
+        with VideoFileClip(mp4_path) as video:  # 使用with语句确保资源正确释放
+            audio = video.audio
 
-        for file_path in file_cache:
-            try:
-                print('正在处理视频文件:', file_path)
-                path = Path(file_path)
+            # 保存为临时WAV文件
+            temp_audio_path = os.path.join(_mp4_path.parent, _mp4_path.stem + ".wav")
+            audio.write_audiofile(temp_audio_path, logger=None)
 
-                text = mp4_to_text(file_path, model)
-                print('语音识别结果:', text)
+        print("音频文件路径:", temp_audio_path)
 
-                results = video_text_recognition(file_path)
-                print('视频识别结果:', text)
 
-                save_text_to_file(os.path.join(path.parent, path.stem + '.txt'), text + '\r\n' + '\r\n'.join(results))
+    except sr.UnknownValueError:
+        return "无法识别音频内容"
+    except sr.RequestError as e:
+        return f"语音识别服务请求失败: {e}"
+    except Exception as e:
+        return f"处理过程出错: {str(e)}"
 
-            except Exception as e:
-                print(f"处理图片时出错: {str(e)}")
-    except ValueError as e:
-        print(e)
+
+if __name__ == "__main__":
+    split_wav('/Users/tyrtao/QcHelper/电商/店铺宣传视频/2025年秋/2025秋促销竖屏.mp4')
+    # target_path = Path(video_target_path)
+    # if not target_path.exists():
+    #     sys.exit(0)
+    # if not target_path.is_dir():
+    #     print(target_path + '不是目录')
+    #     sys.exit(0)
+    #
+    # model = load_whisper_with_mps("/Users/tyrtao/AI/文字识别/语音识别/whisper/medium.pt")
+    #
+    # try:
+    #     file_cache = get_non_hidden_files_video(target_path)
+    #     if not file_cache:
+    #         print('=======未发现任何文件=======')
+    #         sys.exit(0)
+    #
+    #     for file_path in file_cache:
+    #         try:
+    #             print('正在处理视频文件:', file_path)
+    #             path = Path(file_path)
+    #
+    #             text = mp4_to_text(file_path, model)
+    #             print('语音识别结果:', text)
+    #
+    #             results = video_text_recognition(file_path)
+    #             print('视频识别结果:', text)
+    #
+    #             save_text_to_file(os.path.join(path.parent, path.stem + '.txt'), text + '\r\n' + '\r\n'.join(results))
+    #
+    #         except Exception as e:
+    #             print(f"处理图片时出错: {str(e)}")
+    # except ValueError as e:
+    #     print(e)

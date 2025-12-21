@@ -106,7 +106,7 @@ def print_table(table_data):
 
 if __name__ == "__main__":
     # 替换为你的表格图片路径
-    image_path = "/Users/tyrtao/模型/f2bd9d30751028873f5267fdd47e263.jpg"
+    image_path = "/Users/tyrtao/庆辰/模型/万佳/WechatIMG18465.jpg"
 
     # 识别表格
     table_data = recognize_table_with_easyocr(image_path)

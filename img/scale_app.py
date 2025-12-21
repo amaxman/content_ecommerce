@@ -5,7 +5,7 @@ import tkinter as tk
 from tkinter import filedialog, ttk, messagebox
 import threading
 from config import img_width, img_height  # 假设仍使用原配置
-from file.file_utils import get_non_hidden_files_pathlib
+from file.file_utils import get_non_hidden_files_pathlib, read_chinese_path_image, cv2_imwrite_chinese
 
 
 class ImageScaleApp:
@@ -162,7 +162,7 @@ class ImageScaleApp:
         """先处理二维码，再根据长宽比旋转，最后调整图片大小"""
         try:
             # 使用OpenCV读取图片
-            img_cv = cv2.imread(input_path)
+            img_cv = read_chinese_path_image(input_path)
             if img_cv is None:
                 self.log(f"无法读取图片: {input_path}")
                 return False
@@ -209,7 +209,8 @@ class ImageScaleApp:
             new_img[paste_y:paste_y + new_height, paste_x:paste_x + new_width] = resized_img
 
             # 保存结果图片
-            cv2.imwrite(output_path, new_img)
+            cv2_imwrite_chinese(output_path, new_img)
+            # cv2.imwrite(output_path, new_img)
 
             return True
 
@@ -217,7 +218,7 @@ class ImageScaleApp:
             self.log(f"处理图片时出错: {str(e)}")
             return False
 
-    def get_file_new_path(path):
+    def get_file_new_path(self,path):
         # 提取文件所在的目录路径
         file_directory = os.path.dirname(path)
 

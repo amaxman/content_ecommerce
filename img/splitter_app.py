@@ -12,6 +12,8 @@ from pathlib import Path
 import threading
 import time
 
+from file.file_utils import read_chinese_path_image, cv2_imwrite_chinese
+
 
 class ImageSplitterApp:
     def __init__(self, root):
@@ -300,7 +302,8 @@ class ImageSplitterApp:
                 output_path = os.path.join(output_dir, f"{file_name}_{i + 1:02d}.png")
 
                 # 保存分段图片
-                cv2.imwrite(output_path, segment)
+                cv2_imwrite_chinese(output_path, segment)
+                # cv2.imwrite(output_path, segment)
 
         except Exception as e:
             raise Exception(f"拆分图片时出错: {str(e)}")
@@ -312,7 +315,7 @@ class ImageSplitterApp:
             raise Exception("文件不存在或为目录")
 
         # 使用OpenCV读取图片
-        img_cv = cv2.imread(input_path)
+        img_cv = read_chinese_path_image(input_path)
         if img_cv is None:
             raise Exception("无法读取图片")
 

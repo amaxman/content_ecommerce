@@ -231,36 +231,36 @@ def split_wav(mp4_path):
 
 
 if __name__ == "__main__":
-    split_wav('/Users/tyrtao/QcHelper/电商/店铺宣传视频/2025年秋/2025秋促销竖屏.mp4')
-    # target_path = Path(video_target_path)
-    # if not target_path.exists():
-    #     sys.exit(0)
-    # if not target_path.is_dir():
-    #     print(target_path + '不是目录')
-    #     sys.exit(0)
-    #
-    # model = load_whisper_with_mps("/Users/tyrtao/AI/文字识别/语音识别/whisper/medium.pt")
-    #
-    # try:
-    #     file_cache = get_non_hidden_files_video(target_path)
-    #     if not file_cache:
-    #         print('=======未发现任何文件=======')
-    #         sys.exit(0)
-    #
-    #     for file_path in file_cache:
-    #         try:
-    #             print('正在处理视频文件:', file_path)
-    #             path = Path(file_path)
-    #
-    #             text = mp4_to_text(file_path, model)
-    #             print('语音识别结果:', text)
-    #
-    #             results = video_text_recognition(file_path)
-    #             print('视频识别结果:', text)
-    #
-    #             save_text_to_file(os.path.join(path.parent, path.stem + '.txt'), text + '\r\n' + '\r\n'.join(results))
-    #
-    #         except Exception as e:
-    #             print(f"处理图片时出错: {str(e)}")
-    # except ValueError as e:
-    #     print(e)
+    # split_wav('/Users/tyrtao/QcHelper/电商/店铺宣传视频/2025年秋/2025秋促销竖屏.mp4')
+    target_path = Path(video_target_path)
+    if not target_path.exists():
+        sys.exit(0)
+    if not target_path.is_dir():
+        print(target_path + '不是目录')
+        sys.exit(0)
+
+    model = load_whisper_with_mps("/Users/tyrtao/AI/文字识别/语音识别/whisper/medium.pt")
+
+    try:
+        file_cache = get_non_hidden_files_video(target_path)
+        if not file_cache:
+            print('=======未发现任何文件=======')
+            sys.exit(0)
+
+        for file_path in file_cache:
+            try:
+                print('正在处理视频文件:', file_path)
+                path = Path(file_path)
+
+                text = mp4_to_text(file_path, model)
+                print('语音识别结果:', text)
+
+                results = video_text_recognition(file_path)
+                print('视频识别结果:', text)
+
+                save_text_to_file(os.path.join(path.parent, path.stem + '.txt'), text + '\r\n' + '\r\n'.join(results))
+
+            except Exception as e:
+                print(f"处理图片时出错: {str(e)}")
+    except ValueError as e:
+        print(e)

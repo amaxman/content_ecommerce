@@ -12,7 +12,7 @@ from pathlib import Path
 import threading
 import time
 
-from file.file_utils import read_chinese_path_image, cv2_imwrite_chinese
+from file.file_utils import read_chinese_path_image, cv2_imwrite_chinese,get_non_hidden_files_deli_xq
 
 
 class ImageSplitterApp:
@@ -135,7 +135,7 @@ class ImageSplitterApp:
         """处理目录中的图片"""
         try:
             # 获取文件列表
-            file_cache = self.get_non_hidden_files_deli_xq(directory)
+            file_cache = get_non_hidden_files_deli_xq(directory)
             self.total_files = len(file_cache)
 
             if self.total_files == 0:
@@ -179,20 +179,6 @@ class ImageSplitterApp:
         self.root.after(0, lambda: self.update_progress(
             100 if self.processed_count == self.total_files else self.progress_var.get(),
             f"处理结束，共处理 {self.processed_count}/{self.total_files} 个文件"))
-
-    # 以下是原有的图片处理函数
-    def get_non_hidden_files_deli_xq(self, directory):
-        """获取目录中非隐藏的得力相关图片文件"""
-        valid_extensions = ('.jpg', '.jpeg', '.png', '.bmp', '.gif')
-        files = []
-
-        for entry in os.scandir(directory):
-            if entry.is_file() and not entry.name.startswith('.'):
-                if entry.name.lower().endswith(valid_extensions):
-                    # 可以根据需要添加更多筛选条件
-                    files.append(entry.path)
-
-        return files
 
     def get_file_new_path(self, path):
         """获取新的文件路径"""

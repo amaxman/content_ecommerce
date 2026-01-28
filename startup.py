@@ -2,8 +2,10 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from PIL import Image, ImageTk
 
+from img.get_text_app import EasyOCRGUI
 from img.scale_app import ImageScaleApp
 from img.splitter_app import ImageSplitterApp
+from video.get_text_app import VideoToTextApp
 
 
 class NormalApp:
@@ -118,7 +120,7 @@ class NormalApp:
 
         self.btn_video_text = ttk.Button(
             self.grid_panel,
-            text="提取文字",
+            text="视频提取文字",
             image=self.tk_imgs["text"],
             compound=tk.LEFT,
             command=self.video_extract_text,
@@ -126,9 +128,19 @@ class NormalApp:
         )
         self.btn_video_text.grid(row=1, column=1, sticky="nsew")
 
+        self.btn_img_text = ttk.Button(
+            self.grid_panel,
+            text="图片提取文字",
+            image=self.tk_imgs["text"],
+            compound=tk.LEFT,
+            command=self.image_extract_text,
+            style="Func.TButton"
+        )
+        self.btn_img_text.grid(row=1, column=2, sticky="nsew")
+
         # 空单元格用Frame填充
-        self.empty2 = ttk.Frame(self.grid_panel)
-        self.empty2.grid(row=1, column=2, sticky="nsew")
+        # self.empty2 = ttk.Frame(self.grid_panel)
+        # self.empty2.grid(row=1, column=2, sticky="nsew")
 
         # ========== 绑定窗体大小变化事件，动态调整图片大小+确保按钮铺满单元格 ==========
         self.root.bind("<Configure>", self.on_window_resize)
@@ -146,6 +158,7 @@ class NormalApp:
             self.btn_img_qrcode.config(image=self.tk_imgs["qrcode"])
             self.btn_video_watermark.config(image=self.tk_imgs["watermark"])
             self.btn_video_text.config(image=self.tk_imgs["text"])
+            self.btn_img_text.config(image=self.tk_imgs["text"])
 
     def on_window_resize(self, event):
         """窗体大小变化时，动态调整图片大小+确保按钮铺满单元格"""
@@ -191,7 +204,14 @@ class NormalApp:
         messagebox.showinfo("提示", "视频移除水印功能已触发！")
 
     def video_extract_text(self):
-        messagebox.showinfo("提示", "视频提取文字功能已触发！")
+        _root = tk.Toplevel()  # 改为Toplevel，继承主窗口的事件循环
+        VideoToTextApp(_root)
+        root.mainloop()
+
+    def image_extract_text(self):
+        _root = tk.Toplevel()  # 改为Toplevel，继承主窗口的事件循环
+        EasyOCRGUI(_root)
+        root.mainloop()
 
 
 if __name__ == "__main__":

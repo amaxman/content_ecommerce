@@ -218,7 +218,7 @@ class ImageScaleApp:
             self.log(f"处理图片时出错: {str(e)}")
             return False
 
-    def get_file_new_path(self,path):
+    def get_file_new_path(self, path):
         # 提取文件所在的目录路径
         file_directory = os.path.dirname(path)
 
@@ -246,6 +246,8 @@ class ImageScaleApp:
         try:
             # 获取文件列表
             file_cache = get_non_hidden_files_pathlib(target_directory)
+            file_cache = [item for item in file_cache if "/xq" not in item]
+
             total_files = len(file_cache)
             self.log(f"发现 {total_files} 个文件路径")
 

@@ -1,10 +1,12 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+
 from PIL import Image, ImageTk
 
 from img.get_text_app import EasyOCRGUI
 from img.scale_app import ImageScaleApp
 from img.splitter_app import ImageSplitterApp
+from video.flac_mp3_app import AudioConverterGUI
 from video.get_text_app import VideoToTextApp
 
 
@@ -22,6 +24,9 @@ class NormalApp:
         self.main_container.pack(fill=tk.BOTH, expand=True, padx=2, pady=2)
         # 配置主容器的grid权重：第1行（九宫格）占满剩余空间，3列平均分配
         self.main_container.grid_rowconfigure(0, weight=0)
+        for row in range(3):
+            self.main_container.grid_rowconfigure(row, minsize=10)  # 固定行高120
+
         for col in range(3):
             self.main_container.grid_columnconfigure(col, weight=1)
 
@@ -41,6 +46,7 @@ class NormalApp:
             "qrcode": {"path": 'resources/images/qr_code.png', "color": (200, 200, 100)},
             "watermark": {"path": 'resources/images/watermark.png', "color": (200, 100, 200)},
             "text": {"path": 'resources/images/text.png', "color": (100, 200, 200)},
+            "flac": {"path": 'resources/images/flac.png', "color": (100, 200, 200)},
         }
         self.original_imgs = {}  # 存储原始PIL图片
         self.tk_imgs = {}  # 存储tkinter可用的图片对象
@@ -69,12 +75,13 @@ class NormalApp:
         self.style.configure(
             "Func.TButton",
             font=("微软雅黑", 10),
-            padding=2  # 仅保留2px内边距，避免文字/图片贴边
+            padding=2,  # 仅保留2px内边距，避免文字/图片贴边
+            height=120
         )
 
         # 空单元格用Frame填充，同样铺满单元格
-        self.empty1 = ttk.Frame(self.grid_panel)
-        self.empty1.grid(row=0, column=2, sticky="nsew")
+        # self.empty1 = ttk.Frame(self.grid_panel)
+        # self.empty1.grid(row=0, column=2, sticky="nsew")
 
         # ---------------- 第二组：图片处理（九宫格第二行） ----------------
         self.btn_img_scale = ttk.Button(
@@ -138,6 +145,17 @@ class NormalApp:
         )
         self.btn_img_text.grid(row=1, column=2, sticky="nsew")
 
+        # ---------------- 第三组：视频处理（九宫格第三行） ----------------
+        self.btn_flac_mp3 = ttk.Button(
+            self.grid_panel,
+            text="flac ogg==>mp3",
+            image=self.tk_imgs["flac"],
+            compound=tk.LEFT,
+            command=self.convert_flac_2_mp3,
+            style="Func.TButton"
+        )
+        self.btn_flac_mp3.grid(row=2, column=0, sticky="nsew")
+
         # 空单元格用Frame填充
         # self.empty2 = ttk.Frame(self.grid_panel)
         # self.empty2.grid(row=1, column=2, sticky="nsew")
@@ -159,6 +177,7 @@ class NormalApp:
             self.btn_video_watermark.config(image=self.tk_imgs["watermark"])
             self.btn_video_text.config(image=self.tk_imgs["text"])
             self.btn_img_text.config(image=self.tk_imgs["text"])
+            self.btn_flac_mp3.config(image=self.tk_imgs["flac"])
 
     def on_window_resize(self, event):
         """窗体大小变化时，动态调整图片大小+确保按钮铺满单元格"""
@@ -212,6 +231,11 @@ class NormalApp:
         _root = tk.Toplevel()  # 改为Toplevel，继承主窗口的事件循环
         EasyOCRGUI(_root)
         root.mainloop()
+
+    def convert_flac_2_mp3(self):
+        _root = tk.Toplevel()
+        AudioConverterGUI(_root)
+        _root.mainloop()
 
 
 if __name__ == "__main__":

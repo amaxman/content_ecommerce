@@ -1,5 +1,5 @@
 import os
-
+import subprocess
 import ffmpeg
 
 
@@ -97,16 +97,43 @@ def convert_audio(input_target, output_folder, bitrate="320k"):
         print(f"❌ 无效的输入路径：{input_target}")
 
 
+def convert_flac_to_mp3_via_wav(input_file, output_file):
+    import tempfile
+
+    # 创建临时 WAV 文件
+    with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_wav:
+        temp_wav_path = temp_wav.name
+
+    # 第一步：FLAC 转 WAV
+    cmd1 = ['ffmpeg', '-y', '-i', input_file, '-vn', '-acodec', 'pcm_s16le', temp_wav_path]
+    result1 = subprocess.run(cmd1, capture_output=True, text=True)
+
+    if result1.returncode != 0:
+        os.unlink(temp_wav_path)
+        return False
+
+    # 第二步：WAV 转 MP3
+    cmd2 = ['ffmpeg', '-y', '-i', temp_wav_path, '-b:a', '320k', output_file]
+    result2 = subprocess.run(cmd2, capture_output=True, text=True)
+
+    # 删除临时文件
+    os.unlink(temp_wav_path)
+
+    print(result2.returncode)
+
+    return result2.returncode == 0
+
 # 示例使用（适配你的路径）
 if __name__ == "__main__":
     # 配置你的路径
-    INPUT_TARGET = "/Users/tyrtao/tools/music/src"  # 可以是文件路径（如 "/Users/tyrtao/tools/music/src/test.flac"）或目录路径
-    OUTPUT_FOLDER = "/Users/tyrtao/tools/music/dest"  # 固定为输出目录
-    BITRATE = "320k"  # 音质可选：128k/192k/320k
+    # INPUT_TARGET = "/Users/tyrtao/tools/music/src"  # 可以是文件路径（如 "/Users/tyrtao/tools/music/src/test.flac"）或目录路径
+    # OUTPUT_FOLDER = "/Users/tyrtao/tools/music/dest"  # 固定为输出目录
+    # BITRATE = "320k"  # 音质可选：128k/192k/320k
 
     # 执行转换（自动识别输入类型）
-    convert_audio(INPUT_TARGET, OUTPUT_FOLDER, BITRATE)
+    # convert_audio(INPUT_TARGET, OUTPUT_FOLDER, BITRATE)
 
     # 单独测试单个文件的示例（取消注释即可）
     # convert_audio("/Users/tyrtao/tools/music/src/xxx.ogg", OUTPUT_FOLDER)
-    # convert_audio("/Users/tyrtao/tools/music/src/yyy.flac", OUTPUT_FOLDER)
+    # convert_audio("/Users/tyrtao/庆辰/DecryptedMusic/1.flac", "/Users/tyrtao/庆辰/DecryptedMusic/开学/1.mp3")
+    convert_flac_to_mp3_via_wav("/Users/tyrtao/庆辰/DecryptedMusic/1.flac", "/Users/tyrtao/庆辰/DecryptedMusic/开学/1.wav")

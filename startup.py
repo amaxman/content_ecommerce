@@ -8,6 +8,7 @@ from img.scale_app import ImageScaleApp
 from img.splitter_app import ImageSplitterApp
 from video.flac_mp3_app import AudioConverterGUI
 from video.get_text_app import VideoToTextApp
+from video.mp4_wav_text import VideoToTextApp2
 
 
 class NormalApp:
@@ -156,6 +157,17 @@ class NormalApp:
         )
         self.btn_flac_mp3.grid(row=2, column=0, sticky="nsew")
 
+        self.btn_video_wav_text = ttk.Button(
+            self.grid_panel,
+            text="视频语音提取文字",
+            image=self.tk_imgs["text"],
+            compound=tk.LEFT,
+            command=self.video_wav_extract_text,
+            style="Func.TButton"
+        )
+        self.btn_video_wav_text.grid(row=2, column=1, sticky="nsew")
+
+
         # 空单元格用Frame填充
         # self.empty2 = ttk.Frame(self.grid_panel)
         # self.empty2.grid(row=1, column=2, sticky="nsew")
@@ -225,6 +237,11 @@ class NormalApp:
     def video_extract_text(self):
         _root = tk.Toplevel()  # 改为Toplevel，继承主窗口的事件循环
         VideoToTextApp(_root)
+        root.mainloop()
+
+    def video_wav_extract_text(self):
+        _root = tk.Toplevel()  # 改为Toplevel，继承主窗口的事件循环
+        VideoToTextApp2(_root)
         root.mainloop()
 
     def image_extract_text(self):

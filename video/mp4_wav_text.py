@@ -82,7 +82,7 @@ class VideoToTextApp2:
         def load_model():
             try:
                 self.model, run_model = self._load_whisper_with_mps(
-                    "/Users/tyrtao/AI/文字识别/语音识别/whisper/small.pt")
+                    "/Users/tyrtao/AI/文字识别/语音识别/whisper/medium.pt")
                 self.model_status_var.set("模型加载完成（" + run_model + "模式）")
                 self._log("Whisper模型加载完成")
                 if self.selected_file:
@@ -124,7 +124,7 @@ class VideoToTextApp2:
                     audio_text = self._mp4_to_text(str(mp4_path), self.model)
                     self._log(f"音频识别结果预览：{audio_text[:80]}...")
                     # 保存语音文本
-                    save_path = os.path.join(mp4_path.parent, mp4_path.stem + "_语音识别.txt")
+                    save_path = os.path.join(mp4_path.parent, 'doc', mp4_path.stem + "_语音识别.txt")
                     self._save_text_to_file(save_path, audio_text)
                     self._log(f"结果保存至：{save_path}")
                 self._log("\n===== 全部文件处理完成 =====")
